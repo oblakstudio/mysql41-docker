@@ -26,7 +26,7 @@ code beyond container plumbing.
 - `.github/workflows/docker_build.yml` — fires on `release: published` (and `workflow_dispatch`):
   `docker/metadata-action` (semver tags + constant `4.1.11`) → `docker/build-push-action` publish to
   Docker Hub (`linux/386`) → `peter-evans/dockerhub-description` README sync. Requires secrets
-  `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`.
+  `DOCKERHUB_USERNAME`, `DOCKERHUB_PAT` (org-level, shared with all repos).
 
 ## Key Architectural Constraint
 
