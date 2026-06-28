@@ -4,7 +4,7 @@
 [![Docker Image Version](https://img.shields.io/docker/v/oblakstudio/mysql41?sort=semver&logo=docker&logoColor=white&label=image&color=2496ED)](https://hub.docker.com/r/oblakstudio/mysql41/tags)
 [![Docker Pulls](https://img.shields.io/docker/pulls/oblakstudio/mysql41?logo=docker&logoColor=white&color=2496ED)](https://hub.docker.com/r/oblakstudio/mysql41)
 [![Docker Image Size](https://img.shields.io/docker/image-size/oblakstudio/mysql41/latest?logo=docker&logoColor=white&label=size&color=2496ED)](https://hub.docker.com/r/oblakstudio/mysql41/tags)
-[![Release](https://img.shields.io/github/actions/workflow/status/oblakstudio/mysql41/release.yml?branch=master&logo=githubactions&logoColor=white&label=release)](https://github.com/oblakstudio/mysql41/actions/workflows/release.yml)
+[![Release](https://img.shields.io/github/actions/workflow/status/oblakstudio/mysql41-docker/release.yml?branch=master&logo=githubactions&logoColor=white&label=release)](https://github.com/oblakstudio/mysql41-docker/actions/workflows/release.yml)
 ![Platform](https://img.shields.io/badge/platform-linux%2F386-2496ED?logo=docker&logoColor=white)
 ![Base](https://img.shields.io/badge/base-Debian%20Sarge%203.1-A81D33?logo=debian&logoColor=white)
 ![Maintenance](https://img.shields.io/maintenance/yes/2026)
