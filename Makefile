@@ -1,9 +1,9 @@
-# Makefile for oblakstudio/mysql40 — legacy MySQL 4.0 in a container.
-# The image is linux/386 (MySQL 4.0 is a 32-bit-era release); --platform keeps
+# Makefile for oblakstudio/mysql41 — legacy MySQL 4.1 in a container.
+# The image is linux/386 (MySQL 4.1 is a 32-bit-era release); --platform keeps
 # builds and runs consistent on amd64 hosts.
 
-IMAGE       ?= oblakstudio/mysql40
-VERSION     ?= 4.0.24
+IMAGE       ?= oblakstudio/mysql41
+VERSION     ?= 4.1.11
 PLATFORM    ?= linux/386
 ROOT_PW     ?= root
 PORT        ?= 3306

@@ -1,6 +1,6 @@
 #!/bin/bash
-# Entrypoint for oblakstudio/mysql40 — mirrors the official `mysql` image contract
-# (env-driven first-run init, /docker-entrypoint-initdb.d) adapted to MySQL 4.0's
+# Entrypoint for oblakstudio/mysql41 — mirrors the official `mysql` image contract
+# (env-driven first-run init, /docker-entrypoint-initdb.d) adapted to MySQL 4.1's
 # SQL dialect (no CREATE USER — added in 5.0; users are created via GRANT).
 # Sarge ships bash 2.05b — no `pipefail`; keep to portable constructs.
 set -e
