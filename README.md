@@ -1,42 +1,50 @@
-# oblakstudio/mysql40
+# oblakstudio/mysql41
 
-[![MySQL Version](https://img.shields.io/badge/MySQL-4.0.24-00758F?logo=mysql&logoColor=white)](https://hub.docker.com/r/oblakstudio/mysql40)
-[![Docker Image Version](https://img.shields.io/docker/v/oblakstudio/mysql40?sort=semver&logo=docker&logoColor=white&label=image&color=2496ED)](https://hub.docker.com/r/oblakstudio/mysql40/tags)
-[![Docker Pulls](https://img.shields.io/docker/pulls/oblakstudio/mysql40?logo=docker&logoColor=white&color=2496ED)](https://hub.docker.com/r/oblakstudio/mysql40)
-[![Docker Image Size](https://img.shields.io/docker/image-size/oblakstudio/mysql40/latest?logo=docker&logoColor=white&label=size&color=2496ED)](https://hub.docker.com/r/oblakstudio/mysql40/tags)
-[![Build & Publish](https://img.shields.io/github/actions/workflow/status/oblakstudio/mysql40/build.yml?branch=main&logo=githubactions&logoColor=white&label=build)](https://github.com/oblakstudio/mysql40/actions/workflows/build.yml)
+[![MySQL Version](https://img.shields.io/badge/MySQL-4.1.11-00758F?logo=mysql&logoColor=white)](https://hub.docker.com/r/oblakstudio/mysql41)
+[![Docker Image Version](https://img.shields.io/docker/v/oblakstudio/mysql41?sort=semver&logo=docker&logoColor=white&label=image&color=2496ED)](https://hub.docker.com/r/oblakstudio/mysql41/tags)
+[![Docker Pulls](https://img.shields.io/docker/pulls/oblakstudio/mysql41?logo=docker&logoColor=white&color=2496ED)](https://hub.docker.com/r/oblakstudio/mysql41)
+[![Docker Image Size](https://img.shields.io/docker/image-size/oblakstudio/mysql41/latest?logo=docker&logoColor=white&label=size&color=2496ED)](https://hub.docker.com/r/oblakstudio/mysql41/tags)
+[![Release](https://img.shields.io/github/actions/workflow/status/oblakstudio/mysql41/release.yml?branch=master&logo=githubactions&logoColor=white&label=release)](https://github.com/oblakstudio/mysql41/actions/workflows/release.yml)
 ![Platform](https://img.shields.io/badge/platform-linux%2F386-2496ED?logo=docker&logoColor=white)
 ![Base](https://img.shields.io/badge/base-Debian%20Sarge%203.1-A81D33?logo=debian&logoColor=white)
 ![Maintenance](https://img.shields.io/maintenance/yes/2026)
 
 ---
 
-Legacy **MySQL 4.0** (circa 2003) packaged for modern container workflows.
+Legacy **MySQL 4.1** (circa 2005) packaged for modern container workflows.
 
-The image is built on **Debian Sarge (3.1)** — the last Debian release to ship MySQL 4.0
-(`4.0.24`) — pulled from `archive.debian.org`. It is `linux/386` and runs natively on amd64
-hosts via Docker's multi-arch support. The entrypoint mirrors the official `mysql` image
-contract (env-driven first-run init, `/docker-entrypoint-initdb.d`), adapted to MySQL 4.0's
-SQL dialect.
+The image is built on **Debian Sarge (3.1)**, which ships MySQL 4.1 (`4.1.11a`) as the
+`mysql-server-4.1` package — pulled from `archive.debian.org`. (Sarge is the last Debian stable
+to carry 4.1; Etch moved to 5.0.) It is `linux/386` and runs natively on amd64 hosts via
+Docker's multi-arch support. The entrypoint mirrors the official `mysql` image contract
+(env-driven first-run init, `/docker-entrypoint-initdb.d`), adapted to MySQL 4.1's SQL dialect.
 
 > [!WARNING]
-> This is **end-of-life software** (last released in 2008) with known, unpatched security
-> issues. It exists to resurrect legacy applications and data that still require MySQL 4.0 —
+> This is **end-of-life software** (4.1 last released in 2008) with known, unpatched security
+> issues. It exists to resurrect legacy applications and data that still require MySQL 4.1 —
 > run it on **trusted networks only**, never expose it to the public internet.
 
 ## Tags
 
+The wrapped MySQL is a fixed upstream (4.1.11); image releases are versioned independently
+with semantic versioning (driven by [semantic-release](https://semantic-release.gitbook.io/)).
+
 | Tag | Description |
 | --- | --- |
-| `latest`, `4.0.24` | MySQL 4.0.24 on Debian Sarge, `linux/386` |
+| `latest` | Newest image release |
+| `4.1.11` | Wrapped upstream MySQL version (constant) |
+| `X.Y.Z` | Exact image release (e.g. `1.0.0`) |
+| `X.Y`, `X` | Moving image major.minor / major (e.g. `1.0`, `1`) |
+
+All tags are MySQL 4.1.11 on Debian Sarge, `linux/386`.
 
 ## Quick start
 
 ```bash
-docker run --rm -d --name mysql40 \
+docker run --rm -d --name mysql41 \
   -e MYSQL_ROOT_PASSWORD=secret \
   -p 3306:3306 \
-  oblakstudio/mysql40
+  oblakstudio/mysql41
 ```
 
 On amd64 hosts you can add `--platform=linux/386` (Docker usually infers it automatically).
@@ -66,7 +74,7 @@ Files placed in `/docker-entrypoint-initdb.d/` run **once, on first start** (emp
 ```bash
 docker run -d -e MYSQL_ROOT_PASSWORD=secret \
   -v ./seed.sql:/docker-entrypoint-initdb.d/seed.sql \
-  oblakstudio/mysql40
+  oblakstudio/mysql41
 ```
 
 ## Data persistence
@@ -75,23 +83,41 @@ The data directory is `/var/lib/mysql` (declared as a volume). Mount a named vol
 data; the entrypoint detects an existing data directory and skips re-initialization.
 
 ```bash
-docker run -d -e MYSQL_ROOT_PASSWORD=secret -v mysql40data:/var/lib/mysql oblakstudio/mysql40
+docker run -d -e MYSQL_ROOT_PASSWORD=secret -v mysql41data:/var/lib/mysql oblakstudio/mysql41
 ```
 
-## Connecting — old password hashing caveat
+## Connecting — password hashing modes
+
+MySQL 4.1 can store passwords in two formats, controlled by `old_passwords` in
+[`my.cnf`](my.cnf). This image **defaults to `old_passwords = 1`** (the legacy pre-4.1 16-byte
+hash) so it behaves like older 4.x servers and the data sources these images typically
+resurrect.
 
 > [!NOTE]
-> MySQL 4.0 predates the 4.1 authentication protocol and uses the **old 16-byte password hash**.
-> Modern clients (MySQL 8 CLI, some PHP/`mysqlnd` builds) may refuse to connect with a
-> *secure auth* error.
+> With `old_passwords = 1`, modern clients (MySQL 8 CLI, some PHP/`mysqlnd` builds) may refuse
+> to connect with a *secure auth* error because they expect the newer hash. Pass
+> `--skip-secure-auth`:
+>
+> ```bash
+> mysql -h127.0.0.1 -uroot -psecret --skip-secure-auth -e 'SELECT VERSION();'
+> ```
+>
+> Note that MySQL 8's CLI dropped the pre-4.1 protocol entirely — use the **MariaDB client** (or
+> an older `mysql` client) for `old_passwords = 1` accounts.
 
-Pass `--skip-secure-auth` (CLI) or enable `old_passwords` on the client side:
+To use MySQL 4.1's native **41-byte SHA1 hash** instead (the format modern
+`mysql_native_password` clients understand, so `--skip-secure-auth` is **not** needed), set
+`old_passwords = 0` in `my.cnf` before first-run init.
+
+### Character sets
+
+MySQL 4.1 introduced real charset/collation support; the server defaults to **latin1**
+(`latin1_swedish_ci`). When restoring a legacy dump that declares `DEFAULT CHARSET=latin1` and
+carries no `SET NAMES`, restore with `--default-character-set=latin1` to preserve bytes exactly:
 
 ```bash
-mysql -h127.0.0.1 -uroot -psecret --skip-secure-auth -e 'SELECT VERSION();'
+mysql -h127.0.0.1 -uroot -psecret --default-character-set=latin1 mydb < dump.sql
 ```
-
-This is inherent to running MySQL 4.0, not a defect of the image.
 
 ## Configuration
 
@@ -102,27 +128,35 @@ datadir at the container paths. Override it by mounting your own file at the sam
 ## Building from source
 
 ```bash
-make build    # docker build --platform=linux/386 -t oblakstudio/mysql40 .
+make build    # docker build --platform=linux/386 -t oblakstudio/mysql41 .
 make run      # run locally for smoke testing (MYSQL_ROOT_PASSWORD=root)
 make shell    # open a shell in the built image
-make push     # publish :latest and :4.0.24 to Docker Hub
+make push     # publish :latest and :4.1.11 to Docker Hub
 make help     # list all targets
 ```
 
-CI ([`.github/workflows/build.yml`](.github/workflows/build.yml)) builds with Buildx + QEMU and
-publishes `:latest` and `:4.0.24` to Docker Hub on pushes to `main` and `v*` tags.
+Releases are automated in two stages:
+
+- [`release.yml`](.github/workflows/release.yml) — on pushes to `master`,
+  [semantic-release](https://semantic-release.gitbook.io/) derives the next image version from
+  [Conventional Commits](https://www.conventionalcommits.org/) and cuts a GPG-signed **GitHub
+  Release**.
+- [`docker_build.yml`](.github/workflows/docker_build.yml) — when that release is published,
+  `docker/metadata-action` + `docker/build-push-action` build with Buildx + QEMU and push the semver
+  tags (plus `:latest` and `:4.1.11`) to Docker Hub, then `peter-evans/dockerhub-description` syncs
+  this README into the Docker Hub repository description.
 
 ## How it works
 
-MySQL 4.0 predates modern apt/yum repositories, so it **cannot be installed from current distro
+MySQL 4.1 predates modern apt/yum repositories, so it **cannot be installed from current distro
 package sources**. The image is based on `debian/eol:sarge-slim`, whose `sources.list` already
-points at `archive.debian.org`, where `apt-get install mysql-server` resolves to
-`4.0.24-10sarge3`. Sarge's apt (0.5.x) does not do GPG secure-apt, so the unsigned archive repo
+points at `archive.debian.org`, where `apt-get install mysql-server-4.1` resolves to
+`4.1.11a-4sarge8`. Sarge's apt (0.5.x) does not do GPG secure-apt, so the unsigned archive repo
 works as-is; a `policy-rc.d` returning `exit 101` keeps the package's postinst from auto-starting
 the service during the build.
 
 ## Credits & License
 
 Built and maintained by [Oblak Studio](https://oblak.studio). MySQL is a trademark of Oracle
-Corporation; this image merely packages the long-released 4.0 server. The Dockerfile, entrypoint,
+Corporation; this image merely packages the long-released 4.1 server. The Dockerfile, entrypoint,
 and workflows in this repository are released under the **MIT license**.
